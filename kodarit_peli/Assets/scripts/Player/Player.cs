@@ -7,23 +7,20 @@ public class Player : MonoBehaviour
 {
     // Pelaajan liikkumisnopeus ns liikkumisen kerroin
     public float moveSpeed = 5f;
-
     public Rigidbody2D body;
-
     // Tämä kuuntelee kaikki pelaajan wasd ja nuolinäppäimien painallukset
     private Master controls;
     // Tähän tallennetaan nappien painallukset x ja y akselilla
-
+    private Vector2 aimInput;
     private Vector2 moveInput;
     //aseen transform
     public Transform gunTransform;
-    
     // Tämä suoritetaan ennen pelin käynnistystä
     private void Awake()
     {
         controls = new Master();
     }
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,8 +42,12 @@ public class Player : MonoBehaviour
         controls.Disable();
     }
 
-    private void FixedUpdate(){
-        Move(); 
+    private void FixedUpdate()
+    {
+        if (!GameManager.Instance.IsGamePlay())
+        {
+            Move();
+        }
     }
 
     private void Move(){
@@ -62,7 +63,7 @@ public class Player : MonoBehaviour
         //}
         if(Input.GetKeyDown("space"))
         {
-            Debug.Log("Shoot");
+
             GameObject bullet = BulletPoolManager.Instance.GetBullet();
             bullet.transform.position = gunTransform.position;
             bullet.transform.rotation = gunTransform.rotation;
@@ -71,7 +72,14 @@ public class Player : MonoBehaviour
 
     void Aim()
     {
+        aimInput = controls.Player.Aim.ReadValue<Vector2>();
 
+        if(aimInput.sqrMagnitude > 0.1f)
+        {
+            gunTransform.up = aimInput;
+            float angle = (Mathf.Atan2(aimInput.x, -aimInput.y)) * Mathf.Rad2Deg;
+            gunTransform.rotation = Quaternion.Euler(0,0,angle);
+        }
     }
 
 }

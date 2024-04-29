@@ -9,7 +9,7 @@ public class BulletPoolManager : MonoBehaviour
 
     //täs teen luodille referenssin et voi käyttää scriptis sitä
     public GameObject bulletprefab;
-    public int bulletamount = 20;
+    public int bulletamount = 30;
 
     private Queue<GameObject> bulletpool = new Queue<GameObject>();
     // Start is called before the first frame update
@@ -44,5 +44,11 @@ public class BulletPoolManager : MonoBehaviour
         {
             return null;
         }
+        
+    }
+    public void ReturnBullet(GameObject bullet)
+    {
+        bullet.SetActive(false);
+        bulletpool.Enqueue(bullet);
     }
 }
